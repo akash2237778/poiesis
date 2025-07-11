@@ -21,38 +21,15 @@ jobs:
         
       - name: Log request
         run: |
-          echo "Logging curl request for debugging"
-          curl --trace-ascii curl_request.log --location "https://${PUBGRADE_HOST}/repositories/${REPOSITORY_NAME}/builds" \
-          --header 'X-Project-Access-Token: ${{ secrets.PROJECT_ACCESS_TOKEN }}' \
-          --header 'Content-Type: application/json' \
-          --data '{
-              "images": [
-                  {
-                      "name": "${IMAGE_NAME}:${IMAGE_TAG}",
-                      "location": "./Dockerfile"
-                  }
-              ],
-              "head_commit": {
-                  "branch": "${{ github.ref_name }}"
-              },
-              "dockerhub_token": "${{ secrets.DOCKERHUB_TOKEN }}"
-          }' > /dev/null
-          echo "Curl request details:"
-          cat curl_request.log
-        env:
-          PROJECT_ACCESS_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          PUBGRADE_HOST: pubgrade.dyn.cloud.e-infra.cz
-          REPOSITORY_NAME: cwaitc
-          IMAGE_NAME: akash7778/sampletestt
-          IMAGE_TAG: ${{ github.run_number }}
+          echo "${IMAGE_NAME}:${IMAGE_TAG}"
 
       - name: Trigger Build with Curl
         run: |
           curl --location "https://${PUBGRADE_HOST}/repositories/${REPOSITORY_NAME}/builds" \
           --header 'X-Project-Access-Token: ${{ secrets.PROJECT_ACCESS_TOKEN }}' \
           --header 'Content-Type: application/json' \
-          --data '{
+          --data @- << EOF
+          {
               "images": [
                   {
                       "name": "${IMAGE_NAME}:${IMAGE_TAG}",
@@ -63,7 +40,8 @@ jobs:
                   "branch": "${{ github.ref_name }}"
               },
               "dockerhub_token": "${{ secrets.DOCKERHUB_TOKEN }}"
-          }'
+          }
+          EOF
         env:
           PROJECT_ACCESS_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
