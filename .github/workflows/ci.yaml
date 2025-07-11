@@ -1,0 +1,38 @@
+name: Trigger Build
+
+on:
+  push:
+    branches:
+      - main
+      - ci-poiesis
+
+env:
+  PUBGRADE_HOST: pubgrade.dyn.cloud.e-infra.cz
+  REPOSITORY_NAME: cwaitc
+  IMAGE_NAME: akash7778/sampletestt
+  IMAGE_TAG: ${{ github.run_number }}
+
+jobs:
+  trigger-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Build with Curl
+        run: |
+          curl --location "https://${PUBGRADE_HOST}/repositories/${REPOSITORY_NAME}/builds" \
+          --header 'X-Project-Access-Token: ${{ secrets.PROJECT_ACCESS_TOKEN }}' \
+          --header 'Content-Type: application/json' \
+          --data '{
+              "images": [
+                  {
+                      "name": "${IMAGE_NAME}:${IMAGE_TAG}",
+                      "location": "./Dockerfile"
+                  }
+              ],
+              "head_commit": {
+                  "branch": "main"
+              },
+              "dockerhub_token": "${{ secrets.DOCKERHUB_TOKEN }}"
+          }'
+        env:
+          PROJECT_ACCESS_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
