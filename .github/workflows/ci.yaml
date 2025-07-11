@@ -21,8 +21,8 @@ jobs:
         
       - name: Log request
         run: |
-          echo "Starting curl request for debugging"
-          curl --verbose --location "https://${PUBGRADE_HOST}/repositories/${REPOSITORY_NAME}/builds" \
+          echo "Logging curl request for debugging"
+          curl --trace-ascii curl_request.log --location "https://${PUBGRADE_HOST}/repositories/${REPOSITORY_NAME}/builds" \
           --header 'X-Project-Access-Token: ${{ secrets.PROJECT_ACCESS_TOKEN }}' \
           --header 'Content-Type: application/json' \
           --data '{
@@ -36,9 +36,9 @@ jobs:
                   "branch": "${{ github.ref_name }}"
               },
               "dockerhub_token": "${{ secrets.DOCKERHUB_TOKEN }}"
-          }' 2> curl_debug.log
-          echo "Curl debug output:"
-          cat curl_debug.log
+          }' > /dev/null
+          echo "Curl request details:"
+          cat curl_request.log
         env:
           PROJECT_ACCESS_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
