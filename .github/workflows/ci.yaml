@@ -18,20 +18,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
-      - name: Test Environment Variables
-        run: |
-          echo "PUBGRADE_HOST: $PUBGRADE_HOST"
-          echo "REPOSITORY_NAME: $REPOSITORY_NAME"
-          echo "IMAGE_NAME: $IMAGE_NAME"
-          echo "IMAGE_TAG: $IMAGE_TAG"
-          echo "GitHub Branch: ${{ github.ref_name }}"
-          echo "Secrets are set (not printing for security):"
-          echo "PROJECT_ACCESS_TOKEN is set: $(if [ -n "${PROJECT_ACCESS_TOKEN}" ]; then echo 'yes'; else echo 'no'; fi)"
-          echo "DOCKERHUB_TOKEN is set: $(if [ -n "${DOCKERHUB_TOKEN}" ]; then echo 'yes'; else echo 'no'; fi)"
-        env:
-          PROJECT_ACCESS_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Trigger Build with Curl
         run: |
@@ -55,7 +41,3 @@ jobs:
         env:
           PROJECT_ACCESS_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          PUBGRADE_HOST: pubgrade.dyn.cloud.e-infra.cz
-          REPOSITORY_NAME: cwaitc
-          IMAGE_NAME: akash7778/sampletestt
-          IMAGE_TAG: ${{ github.run_number }}
