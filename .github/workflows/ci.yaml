@@ -47,7 +47,7 @@ jobs:
                   }
               ],
               "head_commit": {
-                  "branch": "${{ github.ref_name }}"
+                  "branch": "main"
               },
               "dockerhub_token": "${{ secrets.DOCKERHUB_TOKEN }}"
           }
